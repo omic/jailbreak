@@ -5,7 +5,7 @@ Consensually automatting EMR collection and anonymization... for science!
 
 First off, if the approach is not secure, *we won't do it*.  We believe we can protect the privacy of data donors **and** simultaneously further scientific research for the common good.  Current approaches for patients to willingly donate (anonymized) EMR data to further scientific discoveries -- especially given the COVID-19 pandemic -- are incredibly anitquated and nearly nonexistent.
 
-So we're trying something different.  There is absolutely no guarentee that this will work.
+So we're trying something different.  There is absolutely no guarantee that this will work.
 
 ## working-mem
 - UW Medicine login: https://ecare.uwmedicine.org/prod01/Authentication/Login
