@@ -22,7 +22,7 @@ Crawlers run in secure headless browsers, automating the process of extracting p
 
 ### transform 
 The extracted data must then go through: 
-* anonomyzation -- should do this as soon as possible upon obtaining the data.
+* anonomyzation -- should do this as soon as possible upon obtaining the data.  At the basic level, we're need to remove SSNs, names, and probably birthdates.
 * normalization -- tools such as [White Rabit](https://github.com/OHDSI/WhiteRabbit) are meant to help at this step.
 
 ### load 
