@@ -2,6 +2,10 @@
 
 ## working-mem
 - UW Medicine login: https://ecare.uwmedicine.org/prod01/Authentication/Login
+- Appears that the download from this portal gives decently structured XML files.  Before writing parsers for this, let's make sure there's no better avenue.
+
+## project structure
+
 
 ## links
 
