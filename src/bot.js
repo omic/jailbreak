@@ -4,7 +4,6 @@ export class ProviderCrawler {
     constructor (config, creds) { 
         this.config = config
         this.creds = creds 
-        this.init()
     }
     anon () { }
     async init () { 
@@ -17,8 +16,14 @@ export class ProviderCrawler {
             width: this.config.settings.width, 
             height: this.config.settings.height
         })
+        await this.page._client.send('Page.setDownloadBehavior', {
+            behavior: 'allow',
+            downloadPath: `${this.config.secretPath}/downloads`
+        })
     }
-    crawl () { }
+    async crawl () { 
+        await this.init()
+    }
     async destruct () { 
         await this.browser.close() 
         delete this.creds
@@ -26,26 +31,54 @@ export class ProviderCrawler {
 }
 
 export class UWMedicineBot extends ProviderCrawler {
-    LOGIN_URL = 'https://ecare.uwmedicine.org/prod01/Authentication/Login'
+    constructor (config, creds) {
+        super(config, creds)
+        this.baseUrl = 'https://ecare.uwmedicine.org/prod01'
+        this.loginUrl = `${this.baseUrl}/Authentication/Login`
+        this.recordUrl = `${this.baseUrl}/Documents/DownloadMyRecord`
+    }
     async crawl () {
-        // await bot.initPuppeter().then(() => console.log("PUPPETEER INITIALIZED"))
-        // await bot.visitInstagram().then(() => console.log("BROWSING INSTAGRAM"))
-        // await bot.visitHashtagUrl().then(() => console.log("VISITED HASH-TAG URL"))
-        // await bot.unFollowUsers()
-        // await bot.closeBrowser().then(() => console.log("BROWSER CLOSED"))
-        await this.page.goto(this.LOGIN_URL, {timeout: 60000})
-        await this.page.waitFor(2500)
+        await super.crawl()
+        await this.login()
+        await this.requestExport()
+        await this.pollDownload()
+        await this.page.waitFor(2250 + Math.floor(Math.random() * 250))
+    }
+    async login () {
+        const { un, pw } = this.creds
+        const { loginUrl } = this
+        await this.page.goto(loginUrl, { timeout: 60000 })
+        await this.page.waitFor(1000)
         await this.page.click('#Login')
-        await this.page.waitFor(2500)
-        /* Click on the username field using the field selector*/
-        // await this.page.click(this.config.selectors.username_field)
-        // await this.page.keyboard.type(this.config.username)
-        // await this.page.click(this.config.selectors.password_field)
-        // await this.page.keyboard.type(this.config.password)
-        // await this.page.click(this.config.selectors.login_button)
-        // await this.page.waitForNavigation()
-        // Close Turn On Notification modal after login
-        // await this.page.click(this.config.selectors.not_now_button)
+        await this.page.keyboard.type(un)
+        await this.page.waitFor(1000)
+        await this.page.click('#Password')
+        await this.page.keyboard.type(pw)
+        await this.page.waitFor(1000)
+        await this.page.click('#submit')
+    }
+    async requestExport () {
+        await this.page.goto(this.recordUrl)
+        await this.page.waitFor(2250 + Math.floor(Math.random() * 250))
+        await this.page.click('#tab_topic_3')
+        await this.page.waitForSelector('#vdtdownloadbutton', { timeout: 30000 })
+        await this.page.click('#vdtdownloadbutton')
+        await this.page.waitForSelector('#downloadbtn', { timeout: 30000 })
+        await this.page.click('#downloadbtn')
+    }
+    async pollDownload () {
+        await this.page.waitForSelector('#ROIList', { timeout: 30000 })
+        let content = 'refresh this page'
+        while (content.toLowerCase().includes('refresh this page')) {
+            await this.page.waitFor(10000)
+            content = await this.page.evaluate(() => { 
+                location.reload(true)
+                return document.querySelector('#ROIList > .card').innerText
+            })
+        }
+        await this.page.waitForSelector('#ROIList > .card > .formbuttons > a', { timeout: 30000 })
+        await this.page.click('#ROIList > .card > .formbuttons > a')
+        await this.page.waitFor(1000)
     }
 }
 
