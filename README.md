@@ -1,11 +1,11 @@
-# emr
-Consensually automatting EMR collection and anonymization... for science!
+# jailbreak
+We jailbreak EMRs.  Consensually.  For COVID-19 research.
 
 ## disclaimer 
 
 First off, if the approach is not secure, *we won't do it*.  We believe we can protect the privacy of data donors **and** simultaneously further scientific research for the common good.  Current approaches for patients to willingly donate (anonymized) EMR data to further scientific discoveries -- especially given the COVID-19 pandemic -- are incredibly anitquated and nearly nonexistent.
 
-So we're trying something different.  There is absolutely no guarentee that this will work.
+So we're trying something different.  There is absolutely no guarantee that this will work.
 
 ## working-mem
 - UW Medicine login: https://ecare.uwmedicine.org/prod01/Authentication/Login
@@ -22,14 +22,14 @@ Crawlers run in secure headless browsers, automating the process of extracting p
 
 ### transform 
 The extracted data must then go through: 
-* anonomyzation -- should do this as soon as possible upon obtaining the data.
+* anonomyzation -- should do this as soon as possible upon obtaining the data.  At the basic level, we're need to remove SSNs, names, and probably birthdates.
 * normalization -- tools such as [White Rabit](https://github.com/OHDSI/WhiteRabbit) are meant to help at this step.
 
 ### load 
 Data is currently structured in the OMOP data format in Redshift tables so the data from the prior step should fit without much fuss.  TBD.
 
 ## todo
-- Write webhook to prevent engineers from stupidly committing highly sensitive secrets.
+- Write githook to prevent engineers from stupidly committing highly sensitive secrets.
 - Prompt user to reset password to help them stay extra secure. 
 
 ## links
