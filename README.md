@@ -1,4 +1,4 @@
-# jailbreak
+# 🔓 jailbreak
 We jailbreak EMRs.  Consensually.  For COVID-19 research.
 
 ## disclaimer 
