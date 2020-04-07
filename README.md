@@ -1,5 +1,7 @@
 # jailbreak
-Consensually automatting EMR collection and anonymization... for science!
+We jailbreak EMRs.
+
+Consensually automatting EMR collection and anonymization... for science.
 
 ## disclaimer 
 
