@@ -1,7 +1,5 @@
 # jailbreak
-We jailbreak EMRs.
-
-Consensually automatting EMR collection and anonymization... for science.
+We jailbreak EMRs.  Consensually.  For COVID-19 research.
 
 ## disclaimer 
 
