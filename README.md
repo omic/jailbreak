@@ -29,7 +29,8 @@ The extracted data must then go through:
 Data is currently structured in the OMOP data format in Redshift tables so the data from the prior step should fit without much fuss.  TBD.
 
 ## todo
-- Write webhook to prevent user from stupidly committing highly sensitive secrets.
+- Write webhook to prevent engineers from stupidly committing highly sensitive secrets.
+- Prompt user to reset password to help them stay extra secure. 
 
 ## links
 
