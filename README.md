@@ -1,5 +1,5 @@
 # 🔓 jailbreak
-We jailbreak EMRs.  Consensually.  For COVID-19 research.
+We jailbreak EMRs.  For **COVID-19** research.
 
 ## disclaimer 
 
@@ -7,9 +7,10 @@ First off, if the approach is not secure, *we won't do it*.  We believe we can p
 
 So we're trying something different.  There is absolutely no guarantee that this will work.
 
-## working-mem
-- UW Medicine login: https://ecare.uwmedicine.org/prod01/Authentication/Login
-- Appears that the download from this portal gives decently structured XML files.  Before writing parsers for this, let's make sure there's no better avenue for obtaining the data from UW Medicine.
+## todo
+- Write githook to prevent engineers from stupidly committing highly sensitive secrets.
+- Prompt user to reset password to help them stay extra secure. 
+- Compile list of most related repos and integrate some of their insights.
 
 ## making contributions
 ### consent
@@ -28,12 +29,9 @@ The extracted data must then go through:
 ### load 
 Data is currently structured in the OMOP data format in Redshift tables so the data from the prior step should fit without much fuss.  TBD.
 
-## todo
-- Write githook to prevent engineers from stupidly committing highly sensitive secrets.
-- Prompt user to reset password to help them stay extra secure. 
-
 ## links
 
+- https://github.com/jmandel/sample_ccdas
 - https://healthitanalytics.com/news/open-source-ehr-generator-delivers-healthcare-big-data-with-fhir
 - https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3779068/
 - https://www.biostars.org/p/70204/
