@@ -1,16 +1,33 @@
 # 🔓 jailbreak
-We jailbreak EMRs.  For **COVID-19** research.
+We jailbreak EMRs.  For **COVID-19** [research](##research).
 
 ```sh
 # Add provider credentials to untracked secret directory.
 mkdir .secret/
 echo "[healthcare-alias],[portal-username],[portal-password]" >> ./secret/creds.csv
-# Make waves.
+# Make some waves.
 ./jailbreak.sh
 ```
 
 Currently supported healthcare providers:
-* [UW Medicine](https://www.uwmedicine.org/) - `uw-medicine`
+
+Provider | Supported? | Alias |
+--- | --- | --- |
+[UW Medicine](https://www.uwmedicine.org/) | Y | `uw` |
+Aetna | N | `aetna` |
+Johnson & Johnson | N | `johnson2` |
+UnitedHealth Group | N | `united` |
+Cardinal Health | N | `cardinal` |
+Anthem | N | `anthem` |
+CVS Health | N | `cvs` |
+AmerisourceBergen | N | `ameriberg` |
+Express Scripts Holdings  | N | `express` |
+
+...and more.
+
+## research
+
+Our first research target is in determining the most effective treatment paths for individuals based on what is already being tried and tested by doctors.
 
 ## disclaimer 
 
