@@ -9,10 +9,12 @@ cat << EndOfMessage
  /  :|_/ )/   /  \\  \  /\  |\( \_|:  \ |: |_)  :)|:  __   \ (:      "| /   /  \\  \ |: | \  \  
 (_______/(___/    \___)(__\_|_)\_______)(_______/ |__|  \___) \_______)(___/    \___)(__|  \__) 
 
+An Omic™ Initiative.
+
 EndOfMessage
 
 cd src/
-echo "Booting 'blackra1n'..."
+echo "Booting up 'blackra1n'..."
 sleep 2
 echo "Just kidding."
 npm run start

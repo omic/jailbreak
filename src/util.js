@@ -1,6 +1,9 @@
-import path from 'path'
 import fs from 'fs'
 import neatCsv from 'neat-csv'
+import opn from 'opn'
+import path from 'path'
+
+export const what = () => opn('https://media.giphy.com/media/tVTnEqzAxxmyA/giphy.gif')
 
 /**
  * Read secure records into memory.
@@ -66,5 +69,12 @@ export const deleteFolderRecursive = function (folderPath) {
             }
         })
         fs.rmdirSync(folderPath)
+    }
+}
+
+export class NotImplementedError extends Error {
+    constructor(message = '', ...args) {
+        super(message, ...args)
+        this.message = message + ' has not yet been implemented.'
     }
 }

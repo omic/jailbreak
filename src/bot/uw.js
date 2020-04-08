@@ -2,9 +2,10 @@ import fs from 'fs'
 import glob from 'glob'
 import path from 'path'
 import yauzl from 'yauzl'
+import { parseString } from 'xml2js'
 
-import { ProviderCrawler } from './provider-crawler'
-import { clickAll, typeAll, waitForClick } from './util'
+import { ProviderCrawler } from './master'
+import { clickAll, typeAll, waitForClick } from '../util'
 
 export class UWMedicineBot extends ProviderCrawler {
     constructor (config, creds) {
@@ -13,40 +14,48 @@ export class UWMedicineBot extends ProviderCrawler {
         this.loginUrl = `${this.baseUrl}/Authentication/Login`
         this.recordUrl = `${this.baseUrl}/Documents/DownloadMyRecord`
     }
-    async crawl () {
-        // Get records
-        console.log('Starting headless browser...')
-        await super.crawl()
-        console.log('Logging in...')
-        await this.login()
-        await this.retrieve()
-        // Parse 'em
-        console.log('Parsing data...')
-        const records = await this.parse()
-        console.log('All done?', records)
+    /** 
+     * @override 
+     */
+    async extract (records) {
+        records.forEach((record) => {
+            fs.readFile(record, 'utf-8', (er, data) => {
+                if (er) throw err
+                parseString(data, function (err, result) {
+                    console.dir(result)
+
+                })
+            })
+            throw Error()
+        })
     }
+    /** 
+     * @override 
+     */
     async retrieve () {
+        console.log('Logging in...')
+        await this._login()
         console.log('Requesting records...')
-        await this.requestExport()
+        await this._requestExport()
         console.log('Polling for record export...')
-        await this.pollDownload()
+        await this._pollDownload()
         console.log(`Downloaded records to ${this.resourceDownloadPath}.`)
         await this.page.waitFor(2250 + Math.floor(Math.random() * 250))
     }
-    async login () {
+    async _login () {
         const { un, pw } = this.creds
         const { loginUrl } = this
         await this.page.goto(loginUrl, { timeout: 60000 })
         await typeAll([['#Login', un], ['#Password', pw]], { page: this.page })
         await waitForClick('#submit', { page: this.page, wait: 1000 })
     }
-    async requestExport () {
+    async _requestExport () {
         await this.page.goto(this.recordUrl)
         await clickAll(
             ['#tab_topic_3', '#vdtdownloadbutton', '#downloadbtn'], 
             { randomness: true, page: this.page })
     }
-    async pollDownload () {
+    async _pollDownload () {
         await this.page.waitForSelector('#ROIList', { timeout: 30000 })
         let content = 'refresh this page'
         while (content.toLowerCase().includes('refresh this page')) {
@@ -60,6 +69,9 @@ export class UWMedicineBot extends ProviderCrawler {
         await this.page.click('#ROIList > .card > .formbuttons > a')
         await this.page.waitFor(1000)
     }
+    /** 
+     * @override 
+     */
     async parse () {
         const zip = await new Promise((resolve, reject) => {
             glob(`${this.resourceDownloadPath}/*.zip`, (er, files) => {
@@ -96,6 +108,9 @@ export class UWMedicineBot extends ProviderCrawler {
         })
         return records
     }
+    /** 
+     * @override 
+     */
     async push () {
         // TODO
     }
