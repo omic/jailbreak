@@ -1,10 +1,16 @@
 # 🔓 jailbreak
 We jailbreak EMRs.  For **COVID-19** research.
 
+```sh
+# Add provider credentials to untracked secret directory.
+mkdir .secret/
+echo "[healthcare-alias],[portal-username],[portal-password]" >> ./secret/creds.csv
+# Make waves.
+./jailbreak.sh
 ```
-cd src/
-npm run start
-```
+
+Currently supported healthcare providers:
+* [UW Medicine](https://www.uwmedicine.org/) - `uw-medicine`
 
 ## disclaimer 
 
