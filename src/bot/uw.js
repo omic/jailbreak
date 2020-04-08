@@ -5,7 +5,7 @@ import yauzl from 'yauzl'
 import { parseString } from 'xml2js'
 
 import { ProviderCrawler } from './master'
-import { clickAll, typeAll, waitForClick } from '../util'
+import { clickAll, typeAll, waitForClick, asyncForEach } from '../util'
 
 export class UWMedicineBot extends ProviderCrawler {
     constructor (config, creds) {
@@ -14,20 +14,82 @@ export class UWMedicineBot extends ProviderCrawler {
         this.loginUrl = `${this.baseUrl}/Authentication/Login`
         this.recordUrl = `${this.baseUrl}/Documents/DownloadMyRecord`
     }
+		async _extractVitals (content) {
+			const { 
+				table: [{ 
+					colgroup, 
+					thead: [{ 
+						tr: [{ th }]
+					}], 
+					tbody: [{ tr }]
+				}], 
+				footnote 
+			} = content 
+			const header = th
+			
+			console.log(tr)
+			const rows = tr.map(({ td }) => {
+				console.log('row')
+				console.dir(td)
+			})
+			//console.dir(tr)
+		}	
     /** 
      * @override 
      */
     async extract (records) {
-        records.forEach((record) => {
+				const fields = {
+						'allergies': [],
+						'reason_for_visit': [],
+						'encounter_details': [],
+						'medications': [],
+						// Current entry of interest
+						'last_filed_vital_signs': [],
+						'active_problems': [],
+						'resolved_problems': [],
+						'immunizations': [],
+						'social_history': [],
+						'ordered_prescriptions': [],
+						'progress_notes': [],
+						'plan_of_treatment': [],
+						'results': [],
+						'visit_diagnoses': []
+				}
+				const normalizeTitle = (title) => title.toLowerCase().trim().replace(/\s/g, '_')
+				const self = this
+        records.forEach(record => {
+						console.log('>', record)
             fs.readFile(record, 'utf-8', (er, data) => {
-                if (er) throw err
-                parseString(data, function (err, result) {
-                    console.dir(result)
-
+                if (er) throw er
+								console.log('>> Converted XML to JSON')
+                parseString(data, function (er, result) {
+                    const doc = result.ClinicalDocument.component[0]
+										const sections = doc.structuredBody[0].component
+										sections.forEach(comp => {
+												const { 
+														section: [{ 
+																id, 
+																code, 
+																templateId, 
+																title: [title], 
+																text, 
+																entry
+														}]  
+												} = comp
+												console.log('>>>', normalizeTitle(title), text)
+												if (normalizeTitle(title) === 'last_filed_vital_signs') {
+													const [ content ] = text
+													const vitals = self._extractVitals(content)
+													fields['last_filed_vital_signs'].push(vitals)	
+												} else {
+													// Skip for now
+												}
+										})
                 })
             })
-            throw Error()
         })
+				console.dir(fields)
+				return fields
     }
     /** 
      * @override 
@@ -73,6 +135,7 @@ export class UWMedicineBot extends ProviderCrawler {
      * @override 
      */
     async parse () {
+				// Get ZIP path
         const zip = await new Promise((resolve, reject) => {
             glob(`${this.resourceDownloadPath}/*.zip`, (er, files) => {
                 if (er) reject(er)
@@ -80,6 +143,7 @@ export class UWMedicineBot extends ProviderCrawler {
                 resolve(files[0])
             })
         })
+				// Extract files from ZIP into flattened secret directory.
         const self = this
         const extractPath = `${self.resourceDownloadPath}/extract`
         fs.mkdirSync(extractPath, { recursive: true });

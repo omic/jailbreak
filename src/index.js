@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 import config from './config.js'
 import { UWMedicineBot } from './bot/uw'
 import { what, readSecrets, asyncForEach } from './util'

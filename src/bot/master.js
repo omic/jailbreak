@@ -30,20 +30,22 @@ export class ProviderCrawler {
      * Handles flow from login to upload.
      */
     async go () { 
-        await this.init() 
+        // await this.init() 
         // Get records
         // console.log('Starting headless browser...')
         // await super.crawl()
         // await this.retrieve()
         // Parse 'em
-        this.resourceDownloadPath = `${this.config.secretDownloads}/2fa6d444-ef15-49ec-83c5-3c50d2905cb8`
+
+        this.resourceDownloadPath = `${this.config.secretDownloads}/d450283d-c048-4a2c-becf-a9366d2fba54`
         console.log('Parsing data...')
         const records = await this.parse()
         console.log('Parsed records here:', records)
         const intel = await this.extract(records)
         console.log('Extracted intel:', intel)
+
         // Self-imposed destructor
-        await this.destruct()
+        // await this.destruct()
     }
     /**
      * ...
