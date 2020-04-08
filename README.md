@@ -1,6 +1,11 @@
 # jailbreak
 We jailbreak EMRs.  Consensually.  For COVID-19 research.
 
+```
+cd src/
+npm run start
+```
+
 ## disclaimer 
 
 First off, if the approach is not secure, *we won't do it*.  We believe we can protect the privacy of data donors **and** simultaneously further scientific research for the common good.  Current approaches for patients to willingly donate (anonymized) EMR data to further scientific discoveries -- especially given the COVID-19 pandemic -- are incredibly anitquated and nearly nonexistent.
@@ -31,6 +36,7 @@ Data is currently structured in the OMOP data format in Redshift tables so the d
 ## todo
 - Write githook to prevent engineers from stupidly committing highly sensitive secrets.
 - Prompt user to reset password to help them stay extra secure. 
+- Secure compression and archiving of data for more thorough extraction later.
 
 ## links
 

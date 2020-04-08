@@ -1,0 +1,102 @@
+import fs from 'fs'
+import glob from 'glob'
+import path from 'path'
+import yauzl from 'yauzl'
+
+import { ProviderCrawler } from './provider-crawler'
+import { clickAll, typeAll, waitForClick } from './util'
+
+export class UWMedicineBot extends ProviderCrawler {
+    constructor (config, creds) {
+        super(config, creds)
+        this.baseUrl = 'https://ecare.uwmedicine.org/prod01'
+        this.loginUrl = `${this.baseUrl}/Authentication/Login`
+        this.recordUrl = `${this.baseUrl}/Documents/DownloadMyRecord`
+    }
+    async crawl () {
+        // Get records
+        console.log('Starting headless browser...')
+        await super.crawl()
+        console.log('Logging in...')
+        await this.login()
+        await this.retrieve()
+        // Parse 'em
+        console.log('Parsing data...')
+        const records = await this.parse()
+        console.log('All done?', records)
+    }
+    async retrieve () {
+        console.log('Requesting records...')
+        await this.requestExport()
+        console.log('Polling for record export...')
+        await this.pollDownload()
+        console.log(`Downloaded records to ${this.resourceDownloadPath}.`)
+        await this.page.waitFor(2250 + Math.floor(Math.random() * 250))
+    }
+    async login () {
+        const { un, pw } = this.creds
+        const { loginUrl } = this
+        await this.page.goto(loginUrl, { timeout: 60000 })
+        await typeAll([['#Login', un], ['#Password', pw]], { page: this.page })
+        await waitForClick('#submit', { page: this.page, wait: 1000 })
+    }
+    async requestExport () {
+        await this.page.goto(this.recordUrl)
+        await clickAll(
+            ['#tab_topic_3', '#vdtdownloadbutton', '#downloadbtn'], 
+            { randomness: true, page: this.page })
+    }
+    async pollDownload () {
+        await this.page.waitForSelector('#ROIList', { timeout: 30000 })
+        let content = 'refresh this page'
+        while (content.toLowerCase().includes('refresh this page')) {
+            await this.page.waitFor(10000)
+            content = await this.page.evaluate(() => { 
+                location.reload(true)
+                return document.querySelector('#ROIList > .card').innerText
+            })
+        }
+        await this.page.waitForSelector('#ROIList > .card > .formbuttons > a', { timeout: 30000 })
+        await this.page.click('#ROIList > .card > .formbuttons > a')
+        await this.page.waitFor(1000)
+    }
+    async parse () {
+        const zip = await new Promise((resolve, reject) => {
+            glob(`${this.resourceDownloadPath}/*.zip`, (er, files) => {
+                if (er) reject(er)
+                if (files.length !== 1) reject('Weird number of files matched.')
+                resolve(files[0])
+            })
+        })
+        const self = this
+        const extractPath = `${self.resourceDownloadPath}/extract`
+        fs.mkdirSync(extractPath, { recursive: true });
+        const records = []
+        await new Promise((resolve, reject) => {
+            yauzl.open(zip, { lazyEntries: true }, function (er, zipfile) {
+                if (er) reject(er)
+                zipfile.readEntry()
+                zipfile.on('entry', function (entry) {
+                    const basename = path.basename(entry.fileName).toLowerCase()
+                    if (/doc[0-9]+.xml$/.test(basename)) {
+                        // Record file found
+                        zipfile.openReadStream(entry, function (er, readStream) {
+                            if (er) reject(er)
+                            readStream.on('end', () => zipfile.readEntry())
+                            const filePath = `${extractPath}/${basename}`
+                            const writeable = fs.createWriteStream(filePath)
+                            readStream.pipe(writeable)
+                            records.push(filePath)
+                        })
+                    } else zipfile.readEntry()
+                })
+                zipfile.once('error', reject)
+                zipfile.once('end', resolve)
+            })
+        })
+        return records
+    }
+    async push () {
+        // TODO
+    }
+}

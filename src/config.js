@@ -1,11 +1,11 @@
+const secretPath = `${__dirname}/.secret`
+
 const config = {
-    secretPath: `${__dirname}/.secret/creds.csv`,
+    secretPath,
+    secretFile: `${secretPath}/creds.csv`,
+    secretDownloads: `${secretPath}/records`,
     settings: {
         headless: false,
-        width: 1500,
-        height: 764,
-        oldWidth: 1920,
-        oldHeight: 1080 
     }
 }
 
