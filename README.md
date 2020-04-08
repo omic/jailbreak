@@ -12,6 +12,8 @@ An Omic™ Initiative.
 
 We jailbreak EMRs to support **COVID-19** [research](#research).
 
+## getting started 
+
 ```sh
 # Add provider credentials to untracked secret directory.
 mkdir .secret/
