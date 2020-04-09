@@ -4,6 +4,7 @@ import opn from 'opn'
 import path from 'path'
 
 export const what = () => opn('https://media.giphy.com/media/tVTnEqzAxxmyA/giphy.gif')
+export const normalizeTitle = (title) => title.toLowerCase().trim().replace(/\s/g, '_')
 
 /**
  * Read secure records into memory.

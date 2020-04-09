@@ -5,7 +5,7 @@ import yauzl from 'yauzl'
 import { parseString } from 'xml2js'
 
 import { ProviderCrawler } from './master'
-import { clickAll, typeAll, waitForClick, asyncForEach } from '../util'
+import { clickAll, typeAll, waitForClick, asyncForEach, normalizeTitle } from '../util'
 
 export class UWMedicineBot extends ProviderCrawler {
     constructor (config, creds) {
@@ -15,24 +15,20 @@ export class UWMedicineBot extends ProviderCrawler {
         this.recordUrl = `${this.baseUrl}/Documents/DownloadMyRecord`
     }
 		async _extractVitals (content) {
-			const { 
-				table: [{ 
-					colgroup, 
-					thead: [{ 
-						tr: [{ th }]
-					}], 
-					tbody: [{ tr }]
-				}], 
-				footnote 
-			} = content 
-			const header = th
-			
-			console.log(tr)
-			const rows = tr.map(({ td }) => {
-				console.log('row')
-				console.dir(td)
-			})
-			//console.dir(tr)
+				const { 
+						table: [{ 
+							 colgroup, 
+										thead: [{ 
+												tr: [{ th }]
+										}], 
+										tbody: [{ tr }]
+					 }], 
+					 footnote 
+				} = content 
+				const header = th.map(normalizeTitle)
+				const unfurl = td => (td._) ? td._ : td
+				const rows = tr.map(({ td: row }) => row.map(unfurl))
+				return { header, rows } 
 		}	
     /** 
      * @override 
@@ -55,7 +51,6 @@ export class UWMedicineBot extends ProviderCrawler {
 						'results': [],
 						'visit_diagnoses': []
 				}
-				const normalizeTitle = (title) => title.toLowerCase().trim().replace(/\s/g, '_')
 				const self = this
         records.forEach(record => {
 						console.log('>', record)
@@ -78,17 +73,16 @@ export class UWMedicineBot extends ProviderCrawler {
 												} = comp
 												console.log('>>>', normalizeTitle(title), text)
 												if (normalizeTitle(title) === 'last_filed_vital_signs') {
-													const [ content ] = text
-													const vitals = self._extractVitals(content)
-													fields['last_filed_vital_signs'].push(vitals)	
+														const [ content ] = text
+														const vitals = self._extractVitals(content)
+														fields['last_filed_vital_signs'].push(vitals)	
 												} else {
-													// Skip for now
+														// Skip for now
 												}
 										})
                 })
             })
         })
-				console.dir(fields)
 				return fields
     }
     /** 
