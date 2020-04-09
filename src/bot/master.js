@@ -48,8 +48,8 @@ export class ProviderCrawler {
         this.message('Extracted intel:')
         this.message(intel)
         this.message('Compiling SQL queries...')
-				const queries = await this.compile(intel)
-				await this.push(queries)
+        const queries = await this.compile(intel)
+        await this.push(queries)
         // Self-imposed destructor
         this.message('Destructing self of secrets...')
         await this.destruct()

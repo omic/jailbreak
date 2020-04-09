@@ -1,3 +1,4 @@
+import AWS from 'aws-sdk'
 import fs from 'fs'
 import glob from 'glob'
 import path from 'path'
@@ -5,7 +6,14 @@ import yauzl from 'yauzl'
 import { parseString } from 'xml2js'
 
 import { ProviderCrawler } from './master'
-import { clickAll, typeAll, waitForClick, asyncForEach, normalizeTitle } from '../util'
+import {
+    clickAll,
+    typeAll,
+    waitForClick,
+    asyncForEach,
+    normalizeTitle,
+    cleanEntry
+} from '../util'
 
 export class UWMedicineBot extends ProviderCrawler {
     constructor(config, creds, message) {
@@ -26,21 +34,69 @@ export class UWMedicineBot extends ProviderCrawler {
         const header = th.map(normalizeTitle)
         const unfurl = td => (td._) ? td._ : td
         const rows = tr.map(({ td: row }) => {
-						// TODO:  Auto-detect how to extract desired value from cell.  Right now
-						//			  we're using some embedded heuristics to parse the row.  Yuck.
-						const [{ _: metric }, content, ts, comment] = row
-						let measure 
-						if (normalizeTitle(metric) === 'blood_pressure') {
-								const { content: [{ _: over }, { _: under }] } = content
-								measure = `${over} / ${under}`
-						} else {
-								measure = content._
-						}	
-						return [metric, measure, ts, comment]
-				})
+            // TODO:  Auto-detect how to extract desired value from cell.  Right now
+            //			  we're using some embedded heuristics to parse the row.  Yuck.
+            const [{ _: metric }, content, ts, comment] = row
+            let measure
+            if (normalizeTitle(metric) === 'blood_pressure') {
+                const { content: [{ _: over }, { _: under }] } = content
+                measure = `${over} / ${under}`
+            } else {
+                measure = content._
+            }
+            return [metric, measure, ts, comment]
+        })
         return header.reduce((acc, col, i) => (
             Object.assign(acc, { [col]: rows.map(row => row[i]) })
         ), {})
+    }
+    _compileVitals(vitals) {
+        const getRow = (obj, i) => (
+            Object.entries(obj).reduce((acc, [key, values]) => (
+                Object.assign(acc, { [key]: values[i]} )
+            ), { })
+        )
+        // Assume uniform length, which ought to be the case.
+        const l = Object.values(vitals)[0].length
+        // const observation_table = 'ha'
+        return Array(l).fill().map((_, i) => {
+            const row = getRow(vitals, i) 
+            const values = Object.values(row).join(', ')
+            return values 
+            // TODO:  const columns = Object.keys(row).join(', ')
+            // TODO:  const values = Object.values(row).map(v => `"${v}"`).join(', ')
+            // TODO:  return `insert into ${observation_table} (${columns}) values (${values})`
+        })
+    }
+    async _login() {
+        const { un, pw } = this.creds
+        const { loginUrl } = this
+        await this.page.goto(loginUrl, { timeout: 60000 })
+        await typeAll([['#Login', un], ['#Password', pw]], { page: this.page })
+        await waitForClick('#submit', { page: this.page, wait: 1000 })
+    }
+    async _requestExport() {
+        await this.page.goto(this.recordUrl)
+        await clickAll(
+            ['#tab_topic_3', '#vdtdownloadbutton', '#downloadbtn'],
+            { randomness: true, page: this.page })
+    }
+    async _pollDownload() {
+        await this.page.waitForSelector('#ROIList', { timeout: 30000 })
+        let content = 'refresh this page'
+        while (content.toLowerCase().includes('refresh this page')) {
+            await this.page.waitFor(10000)
+            content = await this.page.evaluate(() => {
+                location.reload(true)
+                return document.querySelector('#ROIList > .card').innerText
+            })
+        }
+        await this.page.waitForSelector(
+            '#ROIList > .card > .formbuttons > a',
+            { timeout: 30000 }
+        )
+        await this.page.click('#ROIList > .card > .formbuttons > a')
+        await this.page.waitFor(1000)
     }
     /** 
      * @override 
@@ -88,6 +144,7 @@ export class UWMedicineBot extends ProviderCrawler {
                         const fe = fields[normTitle]
                         const vitals = self._extractVitals(content)
                         Object.entries(vitals).forEach(([key, vals]) => {
+                            vals = vals.map(cleanEntry)
                             fe[key] = (fe[key] && fe[key].concat(vals)) || vals
                         })
                     } else {
@@ -110,33 +167,6 @@ export class UWMedicineBot extends ProviderCrawler {
         await this._pollDownload()
         console.log(`Downloaded records to ${this.resourceDownloadPath}.`)
         await this.page.waitFor(2250 + Math.floor(Math.random() * 250))
-    }
-    async _login() {
-        const { un, pw } = this.creds
-        const { loginUrl } = this
-        await this.page.goto(loginUrl, { timeout: 60000 })
-        await typeAll([['#Login', un], ['#Password', pw]], { page: this.page })
-        await waitForClick('#submit', { page: this.page, wait: 1000 })
-    }
-    async _requestExport() {
-        await this.page.goto(this.recordUrl)
-        await clickAll(
-            ['#tab_topic_3', '#vdtdownloadbutton', '#downloadbtn'],
-            { randomness: true, page: this.page })
-    }
-    async _pollDownload() {
-        await this.page.waitForSelector('#ROIList', { timeout: 30000 })
-        let content = 'refresh this page'
-        while (content.toLowerCase().includes('refresh this page')) {
-            await this.page.waitFor(10000)
-            content = await this.page.evaluate(() => {
-                location.reload(true)
-                return document.querySelector('#ROIList > .card').innerText
-            })
-        }
-        await this.page.waitForSelector('#ROIList > .card > .formbuttons > a', { timeout: 30000 })
-        await this.page.click('#ROIList > .card > .formbuttons > a')
-        await this.page.waitFor(1000)
     }
     /** 
      * @override 
@@ -179,38 +209,28 @@ export class UWMedicineBot extends ProviderCrawler {
         })
         return records
     }
-		_compileVitals(vitals) {
-				Object.entries(vitals).map(([key, value]) => {
-						console.log('Query:', key)
-				})
-				//console.log('Query??????', vitals)
-				return []
-		}
     /** 
      * @override 
      */
     async compile(intel) {
-				const compileMap = {
-						'last_filed_vital_signs': this._compileVitals
-				}
-				const queries = []
-				Object.entries(intel).forEach(([key, value]) => {
-						if (Object.keys(value).length === 0 || !(key in compileMap)) return
-						console.log(`Parsing "${key}"...`)
-						queries.concat(compileMap[key](value))
-				})
-				console.log('Generated queries:', queries)
-				return queries
-
-        const observation_table = 'ha'
-        return [
-						`insert into ${observation_table} (col0) values (val1)`
-        ]
+        const compileMap = {
+            'last_filed_vital_signs': this._compileVitals
+        }
+        let queries = []
+        Object.entries(intel).forEach(([key, value]) => {
+            if (Object.keys(value).length === 0 || !(key in compileMap)) return
+            console.log(`Parsing "${key}"...`)
+            queries = queries.concat(compileMap[key](value))
+        })
+        console.log('Generated queries:', queries)
+        return queries
     }
     /** 
      * @override 
      */
-    async push() {
-        // TODO
+    async push(queries) {
+        // TODO:  Establish secure connection with Redshift DB and send queries.
+        //        Read schema and connection string from secret config file.
+        const redshift = new AWS.Redshift({ apiVersion: '2012-12-01' })
     }
 }

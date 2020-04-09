@@ -12,6 +12,7 @@
     "url": "git+https://github.com/03balogun/instagram-bot.git"
   },
   "dependencies": {
+    "aws-sdk": "^2.656.0",
     "babel-cli": "^6.0.0",
     "babel-preset-es2015": "^6.0.0",
     "firebase-admin": "^6.1.0",
