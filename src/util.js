@@ -2,7 +2,10 @@ import fs from 'fs'
 import neatCsv from 'neat-csv'
 import opn from 'opn'
 import path from 'path'
+import { uniqueNamesGenerator, adjectives, colors, animals } from 'unique-names-generator'
 
+export const elapsedSeconds = (start, now) => Math.round((now - start) / 1000)
+export const randomName = () => uniqueNamesGenerator({ dictionaries: [adjectives, colors, animals] })
 export const what = () => opn('https://media.giphy.com/media/tVTnEqzAxxmyA/giphy.gif')
 export const normalizeTitle = (title) => title.toLowerCase().trim().replace(/\s/g, '_')
 
@@ -10,11 +13,11 @@ export const normalizeTitle = (title) => title.toLowerCase().trim().replace(/\s/
  * Read secure records into memory.
  */
 export const readSecrets = async (secretPath) => {
-    return await new Promise((resolve, reject) => 
+    return await new Promise((resolve, reject) =>
         fs.readFile(secretPath, async (err, data) => {
             if (err) reject(err)
             resolve(await neatCsv(data))
-    }))
+        }))
 }
 
 export const waitForClick = async (selector, options) => {
@@ -36,9 +39,9 @@ export const typeAll = async (selectors, options) => {
 }
 
 export const clickAll = async (selectors, options = {}) => {
-    const { 
-        randomness = true, 
-        timeout = 10 * 1000, 
+    const {
+        randomness = true,
+        timeout = 10 * 1000,
         page
     } = options
     await asyncForEach(selectors, async (selector, _) => {

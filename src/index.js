@@ -2,23 +2,25 @@
 
 import config from './config.js'
 import { UWMedicineBot } from './bot/uw'
-import { what, readSecrets, asyncForEach } from './util'
+import { what, elapsed, readSecrets, asyncForEach } from './util'
+
+// TODO:  Add mode for allowing users to enter provider and creds at runtime.
 
 const run = async () => {
-    const start = Date()
+    const message = (msg) => console.log(new Date(), '|', msg)
     await asyncForEach(await readSecrets(config.secretFile), async (secret) => {
         switch (secret.provider) {
             case 'uw':
-                const bot = new UWMedicineBot(config, secret)
+                message('[UW Medicine] patient found', 'Processing...')
+                const bot = new UWMedicineBot(config, secret, message)
                 await bot.go()
                 break
             default:
-                console.log('Healthcare provider not found.')
+                message('Healthcare provider not found.')
                 what()
         }
     })
-    const end = Date()
-    console.log(`START TIME - ${start} / END TIME - ${end}`)
+    message('Fin.')
 }
 
 run().catch(e => console.log(e.message))
