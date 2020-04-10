@@ -1,5 +1,6 @@
-
-![](/res/screenshot.png)
+<p align="center">
+  <img src="/res/screenshot.png" />
+</p>
 
 We jailbreak EMRs to support **COVID-19** [research](#research).
 
