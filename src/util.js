@@ -8,7 +8,10 @@ export const elapsedSeconds = (start, now) => Math.round((now - start) / 1000)
 export const randomName = () => uniqueNamesGenerator({ dictionaries: [adjectives, colors, animals] })
 export const what = () => opn('https://media.giphy.com/media/tVTnEqzAxxmyA/giphy.gif')
 export const normalizeTitle = (title) => title.toLowerCase().trim().replace(/\s/g, '_')
-export const cleanEntry = (entry) => entry.match(/(^$|-)/g) ? null : entry
+export const cleanEntry = (entry) => {
+    if (typeof entry !== 'string') return entry
+    return entry.match(/(^$|-)/g) ? null : entry
+}
 
 /**
  * Read secure records into memory.

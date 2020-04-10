@@ -9,11 +9,10 @@ import { what, elapsed, readSecrets, asyncForEach } from './util'
 const run = async () => {
     const message = (msg) => console.log(new Date(), '|', msg)
     await asyncForEach(await readSecrets(config.secretFile), async (secret) => {
+        message(`[${secret.provider}] patient found in ~/.secrets folder.`)
         switch (secret.provider) {
             case 'uw':
-                message('[UW Medicine] patient found', 'Processing...')
-                const bot = new UWMedicineBot(config, secret, message)
-                await bot.go()
+                await (new UWMedicineBot(config, secret, message)).go()
                 break
             default:
                 message('Healthcare provider not found.')
