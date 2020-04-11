@@ -2,7 +2,18 @@
   <img src="/res/screenshot.png" />
 </p>
 
-We jailbreak EMRs to support **COVID-19** [research](#research).
+We jailbreak Electronic Health Records (EMRs) to help solve [COVID-19](https://www.cdc.gov/coronavirus/2019-ncov/index.html).
+
+Under [HIPPA](https://www.healthit.gov/how-to-get-your-health-record) federal law, you have the right to your health records.  What this project enables you to do is to contribute your anonymized data help [https://c19.ai](researchers around the globe) discover optimal treatment paths.
+
+Join the fight.
+
+## todo (for contributors)
+
+- Write githook to prevent engineers from stupidly committing highly sensitive secrets.
+- Prompt user to reset password to help them stay extra secure. 
+- Compile list of most related repos and integrate some of their insights.
+- Secure compression and archiving of data for more thorough extraction later.
 
 ## how it works
 
@@ -10,6 +21,7 @@ We jailbreak EMRs to support **COVID-19** [research](#research).
 # Add provider credentials to untracked secret directory.
 mkdir .secret/
 echo "[healthcare-alias],[portal-username],[portal-password]" >> ./secret/creds.csv
+
 # Make some waves.
 ./jailbreak.sh
 ```
@@ -40,13 +52,8 @@ So we're trying something different.  There is absolutely no guarantee that this
 
 Our first research target is in determining the most effective treatment paths for individuals based on what is already being tried and tested by doctors.
 
-# todo
-- Write githook to prevent engineers from stupidly committing highly sensitive secrets.
-- Prompt user to reset password to help them stay extra secure. 
-- Compile list of most related repos and integrate some of their insights.
-- Secure compression and archiving of data for more thorough extraction later.
-
 # making contributions
+
 ## consent
 Starting off, **patient's must give us consent** to crawl and anonymize their EMRs for them.  The current approach relies on them providing us with login credentials in order for us to peruse their healthcare provider's portal.  This is likely not the PROD solution, because who the hell would do that?
 
