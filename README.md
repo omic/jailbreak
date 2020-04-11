@@ -19,8 +19,8 @@ Join the fight.
 
 ```sh
 # Add provider credentials to untracked secret directory.
-mkdir .secret/
-echo "[healthcare-alias],[portal-username],[portal-password]" >> ./secret/creds.csv
+mkdir ~/.secrets/
+echo "[healthcare-alias],[portal-username],[portal-password]" >> ~/.secrets/creds.csv
 
 # Make some waves.
 ./jailbreak.sh
