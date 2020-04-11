@@ -4,7 +4,7 @@
 
 We jailbreak Electronic Health Records (EMRs) to help solve [COVID-19](https://www.cdc.gov/coronavirus/2019-ncov/index.html).
 
-Under [HIPPA](https://www.healthit.gov/how-to-get-your-health-record) federal law, you have the right to your health records.  What this project enables you to do is to contribute your anonymized data help [https://c19.ai](researchers around the globe) discover optimal treatment paths.
+Under [HIPPA](https://www.healthit.gov/how-to-get-your-health-record) federal law, you have the right to your health records.  What this project enables you to do is to contribute your anonymized data help [researchers around the globe](https://c19.ai) discover optimal treatment paths.
 
 Join the fight.
 
