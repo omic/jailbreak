@@ -70,11 +70,13 @@ The extracted data must then go through:
 ## load 
 Data is currently structured in the OMOP data format in Redshift tables so the data from the prior step should fit without much fuss.  TBD.
 
-# links
+# references
 
 - https://github.com/amida-tech/blue-button
 - https://github.com/jmandel/sample_ccdas
 - https://github.com/OHDSI/WhiteRabbit
+
+- https://cms.pilotfishtechnology.com/producing-simplified-c-cda-data-with-bluebutton
 
 - https://github.com/healthlx/HL7Challenge
 - https://github.com/brynlewis/C-CDA_Viewer
