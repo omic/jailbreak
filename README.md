@@ -72,7 +72,12 @@ Data is currently structured in the OMOP data format in Redshift tables so the d
 
 # links
 
+- https://github.com/amida-tech/blue-button
 - https://github.com/jmandel/sample_ccdas
+- https://github.com/OHDSI/WhiteRabbit
+
+- https://github.com/healthlx/HL7Challenge
+- https://github.com/brynlewis/C-CDA_Viewer
 - https://healthitanalytics.com/news/open-source-ehr-generator-delivers-healthcare-big-data-with-fhir
 - https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3779068/
 - https://www.biostars.org/p/70204/
