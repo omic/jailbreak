@@ -2,20 +2,24 @@
   <img src="/res/screenshot.png" />
 </p>
 
+[![HitCount](http://hits.dwyl.com/lukedottec/omic-ai.svg)](http://hits.dwyl.com/lukedottec/omic-ai)
+
 We jailbreak Electronic Health Records (EMRs) to help solve [COVID-19](https://www.cdc.gov/coronavirus/2019-ncov/index.html).
 
 Under [HIPPA](https://www.healthit.gov/how-to-get-your-health-record) federal law, you have the right to your health records.  What this project enables you to do is to contribute your anonymized data help [researchers around the globe](https://c19.ai) discover optimal treatment paths.
 
 Join the fight.
 
-## todo (for contributors)
-
-- Write githook to prevent engineers from stupidly committing highly sensitive secrets.
-- Prompt user to reset password to help them stay extra secure. 
-- Compile list of most related repos and integrate some of their insights.
-- Secure compression and archiving of data for more thorough extraction later.
-
 ## how it works
+
+The current process is quite simple and will become more complicated in the future, especially as multi-omics are considered.
+
+1.  Enter healthcare provider alias (see below table) and portal credentials.
+1.  Run the `jailbreak.sh` script.  Make sure you have [NPM](https://www.npmjs.com/get-npm) installed.  The program then executes:
+    1.  Login to provider's portal.
+    1.  Navigate to and download [C-CDA](http://www.hl7.org/implement/standards/product_brief.cfm?product_id=492) (medical) records.
+    1.  Parse records into JSON format, anonymizing the data in the process.
+    1.  Convert data to 
 
 ```sh
 # Add provider credentials to untracked secret directory.
@@ -28,19 +32,26 @@ echo "[healthcare-alias],[portal-username],[portal-password]" >> ~/.secrets/cred
 
 Currently supported and _not-yet-supported_ healthcare providers:
 
-Provider | Supported? | Alias |
---- | --- | --- |
-[UW Medicine](https://www.uwmedicine.org/) | Y | `uw` |
-Aetna | N | `aetna` |
-Johnson & Johnson | N | `johnson2` |
-UnitedHealth Group | N | `united` |
-Cardinal Health | N | `cardinal` |
-Anthem | N | `anthem` |
-CVS Health | N | `cvs` |
-AmerisourceBergen | N | `ameriberg` |
-Express Scripts Holdings  | N | `express` |
+Provider | Supported? | Alias | Portal
+--- | --- | --- | --- |
+[UW Medicine](https://www.uwmedicine.org/) | Y | `uw` | - |
+Aetna | N | `aetna` | - |
+Johnson & Johnson | N | `johnson2` | - |
+UnitedHealth Group | N | `united` | - |
+Cardinal Health | N | `cardinal` | - |
+Anthem | N | `anthem` | - |
+CVS Health | N | `cvs` | - |
+AmerisourceBergen | N | `ameriberg` | - |
+Express Scripts Holdings  | N | `express` | - |
 
 ...and more.
+
+## todo [![contributions welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat)](https://github.com/dwyl/esta/issues)
+
+- Write githook to prevent engineers from stupidly committing highly sensitive secrets.
+- Prompt user to reset password to help them stay extra secure. 
+- Compile list of most related repos and integrate some of their insights.
+- Secure compression and archiving of data for more thorough extraction later.
 
 ## disclaimer 
 
