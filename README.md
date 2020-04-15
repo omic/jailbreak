@@ -19,7 +19,8 @@ The current process is quite simple and will become more complicated in the futu
     1.  Login to provider's portal.
     1.  Navigate to and download [C-CDA](http://www.hl7.org/implement/standards/product_brief.cfm?product_id=492) (medical) records.
     1.  Parse records into JSON format, anonymizing the data in the process.
-    1.  Convert data to 
+    1.  Convert data to OMOP CDM.
+    1.  Publish anonymized, transformed data to central database for researchers to analyze.
 
 ```sh
 # Add provider credentials to untracked secret directory.
