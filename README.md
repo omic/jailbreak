@@ -97,3 +97,7 @@ Data is currently structured in the OMOP data format in Redshift tables so the d
 - https://github.com/cerner/fhir.cerner.com
 - https://open.epic.com/Tutorial/PatientAuthentication
 - https://www.sciencedirect.com/science/article/pii/S2352914817302253
+
+<hr />
+<br />
+<a href="https://c19.ai"><img src="https://i.imgur.com/1m3lIqY.png" style="border-radius: 0.5rem" /></a>
