@@ -18,6 +18,7 @@ const config = {
 		},
 		db: {
 				type: 'aws-redshift',
+				key: null,
 				region: 'us-east-2',
 				schema: 'cmsdesynpuf1k',
 				tables: ['measurement', 'provider', 'person']
