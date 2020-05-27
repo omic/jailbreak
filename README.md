@@ -36,6 +36,7 @@ Currently supported and _not-yet-supported_ healthcare providers:
 Provider | Supported? | Alias | Portal
 --- | --- | --- | --- |
 [UW Medicine](https://www.uwmedicine.org/) | Y | `uw` | - |
+Kaiser Permanente | Y | `kaiser` | - |
 Aetna | N | `aetna` | - |
 Johnson & Johnson | N | `johnson2` | - |
 UnitedHealth Group | N | `united` | - |
