@@ -10,6 +10,15 @@ Under [HIPPA](https://www.healthit.gov/how-to-get-your-health-record) federal la
 
 Join the fight.
 
+## supported providers
+
+<span>
+<img src="https://www.navos.org/wp-content/uploads/Kaiser-Permanente-Logo.png" height="100" style="display: inline" />
+</span>
+<span>
+<img src="https://i2.wp.com/cristaseniorliving.org/wp-content/uploads/2018/10/UW-Medicine-logo.jpg?ssl=1" height="100" style="display: inline" />
+</span>
+
 ## how it works
 
 The current process is quite simple and will become more complicated in the future, especially as multi-omics are considered.
